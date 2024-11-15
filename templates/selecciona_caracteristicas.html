@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Selecciona Características para Agrupamiento Espectral</title>
+</head>
+<body>
+    <h3>Selecciona las características:</h3>
+    
+    <!-- Mostrar errores de validación si existen -->
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    
+    <form method="post">
+        <input type="checkbox" name="caracteristicas" value="frecuencia"> Frecuencia fundamental<br>
+        <input type="checkbox" name="caracteristicas" value="Ancho_banda"> Ancho de banda<br>
+        <input type="checkbox" name="caracteristicas" value="Centroide"> Centroide espectral<br>
+        <input type="checkbox" name="caracteristicas" value="Entropia"> Entropía espectral<br>
+        <input type="submit" value="Ejecutar">
+    </form>
+</body>
+</html>
