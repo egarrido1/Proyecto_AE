@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña</title>
+    <!-- Este formulario utiliza JavaScript para validar que las contraseñas coincidan antes de enviarlo -->
+    <style>
+        /* código CSS */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Cambiar Contraseña</h2>
+        <form method="POST" action="{{ url_for('recuperar_contraseña') }}" onsubmit="return validateForm()">
+            <!-- Identificación del usuario -->
+            <div>
+                <label for="username">Nombre de usuario o correo:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <!-- Nueva contraseña -->
+            <div>
+                <label for="new_password">Nueva Contraseña:</label>
+                <input type="password" id="new_password" name="new_password" required>
+            </div>
+            <!-- Confirmación de contraseña -->
+            <div>
+                <label for="confirm_password">Confirmar Contraseña:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
+            <!-- Botón de envío -->
+            <button type="submit">Cambiar Contraseña</button>
+        </form>
+    </div>
+    
+    <script>
+        function validateForm() {
+            const newPassword = document.getElementById("new_password").value;
+            const confirmPassword = document.getElementById("confirm_password").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (newPassword !== confirmPassword) {
+                errorMessage.style.display = "block";
+                return false; // No enviar el formulario
+            } else {
+                errorMessage.style.display = "none";
+                return true; // Enviar el formulario
+            }
+        }
+    </script>
+</body>
+</html>

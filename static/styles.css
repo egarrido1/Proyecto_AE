@@ -1,0 +1,59 @@
+body {
+    font-family: 'Roboto', sans-serif; /* Texto del cuerpo */
+    background-color: #f7f9fc;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    font-family: 'Poppins', sans-serif; /* Títulos */
+    color: #333;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #4a90e2;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+h2 {
+    font-size: 1.5em;
+    color: #5c6b77;
+    text-align: center;
+    margin-top: 0;
+}
+
+p, li {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    color: #666;
+}
+a {
+    font-family: 'Roboto', sans-serif;
+    text-decoration: none;
+    color: #4a90e2;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #e24a4a;
+}
+
+button, .button-link {
+    font-family: 'Roboto', sans-serif;
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+button:hover, .button-link:hover {
+    background-color: #e24a4a;
+}
