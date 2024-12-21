@@ -1,3 +1,4 @@
+<!--  Programa de respaldo sin gradiente -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -62,6 +63,8 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            margin-top: 10px; /* Da un poco de espacio entre el botón y el siguiente elemento */
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
@@ -84,22 +87,31 @@
 <body>
     <div class="container">
         <h2>Iniciar sesión</h2>
-        <form method="POST">
+        <form method="POST" autocomplete="off">
             <!-- Campo de usuario -->
             <div>
                 <label for="username">Nombre de usuario:</label>
-                <input type="text" id="username" name="username" required>
+               <input type="text" id="username" name="username" required>
             </div>
             <!-- Campo de contraseña -->
             <div>
                 <label for="password">Contraseña:</label>
                 <input type="password" id="password" name="password" required>
             </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                 {% if messages %}
+                     <ul> {% for category, message in messages %}
+                             <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
             <!-- Botón de envío -->
             <button type="submit">Iniciar sesión</button>
         </form>
         <!-- Enlace para recuperar contraseña -->
         <a href="{{ url_for('recuperar_contraseña') }}">¿Olvidaste tu contraseña?</a>
+        <a href="{{ url_for('register') }}">Registrarse</a>
     </div>
 </body>
 </html>

@@ -55,7 +55,13 @@
         .error-message {
             color: red;
             font-size: 12px;
-            display: none;
+            display: block;
+        }
+
+        .success {
+            color: green;
+            font-size: 14px;
+            display: block;
         }
     </style>
 </head>
@@ -65,7 +71,7 @@
         <form method="POST" action="{{ url_for('recuperar_contraseña') }}" onsubmit="return validateForm()">
             <!-- Identificación del usuario -->
             <div>
-                <label for="username">Nombre de usuario o correo:</label>
+                <label for="username">Nombre de usuario:</label>
                 <input type="text" id="username" name="username" required>
             </div>
             <!-- Nueva contraseña -->
@@ -78,6 +84,19 @@
                 <label for="confirm_password">Confirmar Contraseña:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="messages">
+                        {% for category, message in messages %}
+                            <li class="error-message">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+
+
+            
             <!-- Botón de envío -->
             <button type="submit">Cambiar Contraseña</button>
         </form>

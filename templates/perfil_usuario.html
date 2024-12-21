@@ -9,9 +9,9 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
+            justify-content: center;  /* Centrado horizontal */
+            align-items: center;      /* Centrado vertical */
+            height: 100vh;            /* Altura completa de la ventana */
             margin: 0;
         }
         .container {
@@ -53,11 +53,27 @@
         a:hover {
             color: #66bb6a;
         }
+        /* Estilo para el botón de "Cambiar Contraseña" (Color Azul) */
+        .cambiar-contrasena {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;  /* Color Verde para cambiar contraseña */
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .cambiar-contrasena:hover {
+            background-color: #45a049; /* Verde más oscuro cuando pasas el mouse */
+        }
+
+        /* Estilo para el botón de "Cerrar sesión" (Color Rojo) */
         .logout {
             display: inline-block;
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #f44336;
+            background-color: #f44336; /* Rojo para el botón */
             color: white;
             text-decoration: none;
             border-radius: 4px;
@@ -69,17 +85,32 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bienvenido, {{ current_user.username }}!</h1>
+
+         <!-- Mostrar mensajes flash -->
+         {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+             <div class="alert-container">
+                 {% for category, message in messages %}
+                     <div class="alert alert-{{ category }}">
+                         {{ message }}
+                     </div>
+                 {% endfor %}
+             </div>
+         {% endif %}
+     {% endwith %}
+
+        <h1>Bienvenido</h1>
         
         <h2>Información del perfil:</h2>
-        <p><strong>Nombre de usuario:</strong> {{ current_user.username }}</p>
+        <p><strong>Nombre de usuario:</strong> {{ current_user.nombre_usuario }}</p>
        
-        <!-- Enlace para cambiar la contraseña -->
+        <!-- Enlace para cambiar la contraseña, con la clase "cambiar-contrasena" -->
         <h3>Configurar tu cuenta:</h3>
         <ul>
-            <li><a href="{{ url_for('cambiar_contraseña') }}">Cambiar Contraseña</a></li>
+            <li><a class="cambiar-contrasena" href="{{ url_for('cambiar_contraseña') }}">Cambiar Contraseña</a></li>
         </ul>
 
+        <!-- Enlace para cerrar sesión, con la clase "logout" para color rojo -->
         <a class="logout" href="{{ url_for('logout') }}">Cerrar sesión</a>
     </div>
 </body>

@@ -1,10 +1,9 @@
 import numpy as np
+from sklearn.cluster import KMeans
 #!/usr/bin/env python
 # coding: utf-8
 
 # ## Algoritmo de agrupamiento espectral
-
-# In[ ]:
 
 
 # Función que normaliza un vector
@@ -116,6 +115,7 @@ def algoritmo_agrupamiento_espectral(X_matriz,X):
 # Algritmo K-means 
 def algoritmo_kmeans(X_matriz):
     
+    print("entra a algoritmo kmeans")
     # Definir el número de clusters
     k = 2
     
@@ -124,5 +124,9 @@ def algoritmo_kmeans(X_matriz):
     etiquetas = kmeans.labels_
     centros = kmeans.cluster_centers_
     
+    print("centros despues de calcularlos: ",centros)
+    print("etiquetas despues de calcularlas: ",etiquetas)
     return etiquetas,centros
 
+
+# %%

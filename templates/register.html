@@ -88,12 +88,17 @@
         a:hover {
             color: #66bb6a;
         }
+        .error-message {
+            color: red;
+             display: none; /* Oculto por defecto */
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Registro de Usuario</h2>
-        <form method="POST" action="{{ url_for('registro') }}" onsubmit="return validateForm()">
+        <form method="POST" action="{{ url_for('register') }}" onsubmit="return validateForm()">
             <!-- Nombre de usuario -->
             <div>
                 <label for="username">Nombre de usuario:</label>
@@ -111,6 +116,14 @@
                 <label for="confirm_password">Confirmar Contraseña:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                 {% if messages %}
+                     <ul> {% for category, message in messages %}
+                             <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
 
             <!-- Error de contraseñas no coinciden -->
             <div id="error-message" class="error-message">
@@ -128,8 +141,9 @@
             const confirmPassword = document.getElementById("confirm_password").value;
             const errorMessage = document.getElementById("error-message");
             
-            // Expresión regular para verificar la contraseña
-            const passwordRegex = /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+            // Limpia el mensaje previo
+            errorMessage.innerText = "";
+
     
             // Si las contraseñas no  coinciden manda mensaje de error
             if (password !== confirmPassword) {
@@ -138,14 +152,17 @@
                 return false; // No enviar el formulario
             }
             // Validar requisitos de la contraseña
+            // Expresión regular para verificar la contraseña
+             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+~\-=\[\]{}|;:'",.<>?/]).{8,}$/;
+
             if (!passwordRegex.test(password)) {
-                errorMessage.innerText = "La contraseña debe tener al menos 8 caracteres, incluir un número y un carácter especial.";
+                errorMessage.innerText = "La contraseña debe tener al menos 8 caracteres,1 letra mayuscula, incluir un número y un carácter especial.";
                 errorMessage.style.display = "block";
                 return false; // No enviar el formulario
-            } else {
-                errorMessage.style.display = "none";
-                return true; // Enviar el formulario
             }
+            // Si todo está bien
+            errorMessage.style.display = "none";
+            return true;
         }
     </script>
 </body>

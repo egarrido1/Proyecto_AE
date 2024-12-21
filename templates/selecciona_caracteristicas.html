@@ -2,22 +2,150 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Selecciona Características para Agrupamiento Espectral</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }}</title> 
+    <!--<title>Agrupamiento Espectral</title>-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+
+/* Estilos generales */
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9; /* Fondo sutil */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 28px;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 22px;
+    color: #333;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+ul {
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+li {
+    font-size: 16px;
+    color: #555;
+}
+
+button {
+    background-color: #6c757d; /* Color de fondo del botón */
+    color: #fff; /* Color de texto blanco */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    width: 100%; /* Hace que el botón ocupe todo el ancho */
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #5a6268; /* Color al pasar el mouse */
+    transform: scale(1.05);
+}
+
+/* Estilo para el mensaje de error */
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 5px;
+}
+
+/* Estilo para el enlace de resultados */
+.results-link {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.results-link a {
+    color: #007bff;
+    font-size: 18px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.results-link a:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para los checkboxes */
+label {
+    font-size: 16px;
+    color: #333;
+    margin-top: 10px;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+    </style>
 </head>
 <body>
-    <h3>Selecciona las características:</h3>
-    
-    <!-- Mostrar errores de validación si existen -->
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    
-    <form method="post">
-        <input type="checkbox" name="caracteristicas" value="frecuencia"> Frecuencia fundamental<br>
-        <input type="checkbox" name="caracteristicas" value="Ancho_banda"> Ancho de banda<br>
-        <input type="checkbox" name="caracteristicas" value="Centroide"> Centroide espectral<br>
-        <input type="checkbox" name="caracteristicas" value="Entropia"> Entropía espectral<br>
-        <input type="submit" value="Ejecutar">
-    </form>
+    <div class="container">
+       <!-- <h1>Agrupamiento Espectral</h1>-->
+       <h1>{{ titulo }}</h1>
+
+
+        {% if error %}
+        <div class="error">
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}  
+
+        <form method="POST">
+            <h2>Selecciona las características</h2>
+            <div>
+                <input id="frecuencia" type ="checkbox" name="opciones" value = 0>
+                <label for="frecuencia">frecuencia</label>
+            </div>
+            <div>
+                <input id="ancho_banda" type ="checkbox" name="opciones" value = 1>
+                <label for="ancho_banda">Ancho de Banda</label>
+            </div>
+            <div>
+                <input id="centroide" type ="checkbox" name="opciones" value = 2>
+                <label for="centroide">Centroide Espectral</label>
+            </div>
+            <div>
+                <input id="Entropia" type ="checkbox" name="opciones" value = 3>
+                <label for="Entropia">Entropia Espectral</label>
+            </div>
+
+
+            <!--<button type="submit">Ejecutar Agrupamiento Espectral</button>-->
+            <button type="submit">Ejecutar {{ titulo }}</button>
+        </form>
+    </div>
 </body>
 </html>

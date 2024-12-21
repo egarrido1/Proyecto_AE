@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados de la Comparación de Algoritmos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #4CAF50;
+        }
+        .image-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .metrics {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .back-button {
+            display: block;
+            width: fit-content;
+            margin: 20px auto;
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Resultados de la Comparación</h1>
+
+    <!-- Gráfica -->
+    <div class="image-container">
+        <img src="{{ imagen_combinada }}" alt="Comparación de Algoritmos">
+    </div>
+
+    <!-- Métricas de Agrupamiento Espectral -->
+    <h2>Agrupamiento Espectral</h2>
+    <h3>Matriz de Confusión</h3>
+    <table>
+        <tr>
+            <th></th>
+            <th>Predicción: 0</th>
+            <th>Predicción: 1</th>
+        </tr>
+        <tr>
+            <th>Etiqueta: 0</th>
+            <td>{{ confusionM_ae[0][0] }}</td>
+            <td>{{ confusionM_ae[0][1] }}</td>
+        </tr>
+        <tr>
+            <th>Etiqueta: 1</th>
+            <td>{{ confusionM_ae[1][0] }}</td>
+            <td>{{ confusionM_ae[1][1] }}</td>
+        </tr>
+    </table>
+
+    <h3>Métricas de Rendimiento</h3>
+    <div class="metrics">
+        <span><strong>RMSE:</strong> {{ RMSE_ae }}</span>
+    </div>
+    <table>
+        <tr>
+            <th>Métrica</th>
+            <th>Etiqueta: 0</th>
+            <th>Etiqueta: 1</th>
+        </tr>
+        <tr>
+            <td>Precisión</td>
+            <td>{{ precision_ae_0 }}</td>
+            <td>{{ precision_ae_1 }}</td>
+        </tr>
+        <tr>
+            <td>Recall</td>
+            <td>{{ recall_ae_0 }}</td>
+            <td>{{ recall_ae_1 }}</td>
+        </tr>
+        <tr>
+            <td>F-measure</td>
+            <td>{{ f_measure_ae_0 }}</td>
+            <td>{{ f_measure_ae_1 }}</td>
+        </tr>
+    </table>
+
+    <!-- Métricas de K-Means -->
+    <h2>K-Means</h2>
+    <h3>Matriz de Confusión</h3>
+    <table>
+        <tr>
+            <th></th>
+            <th>Predicción: 0</th>
+            <th>Predicción: 1</th>
+        </tr>
+        <tr>
+            <th>Etiqueta: 0</th>
+            <td>{{ confusionM_km[0][0] }}</td>
+            <td>{{ confusionM_km[0][1] }}</td>
+        </tr>
+        <tr>
+            <th>Etiqueta: 1</th>
+            <td>{{ confusionM_km[1][0] }}</td>
+            <td>{{ confusionM_km[1][1] }}</td>
+        </tr>
+    </table>
+
+    <h3>Métricas de Rendimiento</h3>
+    <div class="metrics">
+        <span><strong>RMSE:</strong> {{ RMSE_km }}</span>
+    </div>
+    <table>
+        <tr>
+            <th>Métrica</th>
+            <th>Etiqueta: 0</th>
+            <th>Etiqueta: 1</th>
+        </tr>
+        <tr>
+            <td>Precisión</td>
+            <td>{{ precision_km_0 }}</td>
+            <td>{{ precision_km_1 }}</td>
+        </tr>
+        <tr>
+            <td>Recall</td>
+            <td>{{ recall_km_0 }}</td>
+            <td>{{ recall_km_1 }}</td>
+        </tr>
+        <tr>
+            <td>F-measure</td>
+            <td>{{ f_measure_km_0 }}</td>
+            <td>{{ f_measure_km_1 }}</td>
+        </tr>
+    </table>
+
+    <a href="/" class="back-button">Menu</a>
+     <!-- Botón para regresar a la selección de características -->
+     <div style="text-align: center; margin-top: 20px;">
+        <a href="/compara_algoritmos" style="background-color: #5d49aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Seleccionar caracteristicas</a>
+    </div>
+</body>
+</html>

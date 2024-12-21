@@ -88,12 +88,24 @@
         a:hover {
             color: #66bb6a;
         }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: block;
+        }
+
+        .success {
+            color: green;
+            font-size: 14px;
+            display: block;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Cambiar Contraseña</h2>
-        <form method="POST" action="{{ url_for('cambiar_contraseña') }}">
+        <form method="POST" action="{{ url_for('cambiar_contraseña') }}" onsubmit="return validateForm()">
             <!-- Contraseña actual -->
             <div>
                 <label for="current_password">Contraseña actual:</label>
@@ -108,13 +120,44 @@
             <div>
                 <label for="confirm_password">Confirmar nueva contraseña:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
+                <div id="error-message" style="color: red; display: none;">
+                    Las contraseñas no coinciden.
+                </div>
             </div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul class="messages">
+                        {% for category, message in messages %}
+                            <li class="error-message">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            
+
             <!-- Botón de envío -->
             <button type="submit">Cambiar Contraseña</button>
         </form>
+
+        <!-- Enlace para volver al perfil -->
         <a href="{{ url_for('perfil_usuario') }}">Volver al perfil</a>
     </div>
+
+    <script>
+        function validateForm() {
+            const newPassword = document.getElementById("new_password").value;
+            const confirmPassword = document.getElementById("confirm_password").value;
+            const errorMessage = document.getElementById("error-message");
+
+            if (newPassword !== confirmPassword) {
+                errorMessage.style.display = "block";
+                return false; // No enviar el formulario
+            } else {
+                errorMessage.style.display = "none";
+                return true; // Enviar el formulario
+            }
+        }
+    </script>
 </body>
 </html>
-
-
