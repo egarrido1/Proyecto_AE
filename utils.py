@@ -61,9 +61,6 @@ def calcula_precision_recall_fmeasure(cm,beta=1):
     # Calculando F-measure para clase 1
     f_measure_1 = (1 + beta**2) * (precision_1 * recall_1) / (beta**2 * precision_1 + recall_1)
 
-    print("calculando fmeasure dentro de la funcion")
-    print(f_measure_0)
-    print(f_measure_1)
 
     return precision_0, recall_0, f_measure_0, precision_1, recall_1, f_measure_1
 

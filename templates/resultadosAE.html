@@ -57,13 +57,59 @@
 
         .metrics {
             text-align: center;
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         .metrics span {
             display: inline-block;
-            margin: 10px 20px;
+            margin: 5px 0;
             font-size: 16px;
+        }
+
+        .note {
+            font-style: italic;
+            color: gray;
+            margin-top: 5px;
+            text-align: center;
+        }
+
+         /* Estilo para el botón del menú principal */
+         .menu-button a {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+             margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-weight: normal; /* Esto asegura que la letra no esté en negrita */
+        }
+
+        .menu-button a:hover {
+            background-color: #45a049;
+            transform: scale(1.05); 
+        }
+
+        /* Estilo para el botón "Seleccionar características" */
+        .features-button {
+            display: inline-block;
+            background-color: #5d49aa;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .features-button:hover {
+            background-color: #4e3b8e;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -72,7 +118,7 @@
         <h1>Resultados del Agrupamiento</h1>
         
         <!-- Mostrar la gráfica -->
-        <h2>Gráfica de Agrupamiento</h2>
+        <h2>Gráficas de Agrupamiento</h2>
         <img src="{{ imagen }}" alt="Gráfica de agrupamiento">
         
         <!-- Tabla de la matriz de confusión -->
@@ -80,16 +126,16 @@
         <table>
             <tr>
                 <th></th>
-                <th>Predicción: 0</th>
-                <th>Predicción: 1</th>
+                <th>Estimación: 0 (Mujeres)</th>
+                <th>Estimación: 1 (Hombres)</th>
             </tr>
             <tr>
-                <th>Etiqueta: 0</th>
+                <th>Clase: 0 (Mujeres)</th>
                 <td>{{ confusionM[0][0] }}</td>
                 <td>{{ confusionM[0][1] }}</td>
             </tr>
             <tr>
-                <th>Etiqueta: 1</th>
+                <th>Clase: 1 (Hombres)</th>
                 <td>{{ confusionM[1][0] }}</td>
                 <td>{{ confusionM[1][1] }}</td>
             </tr>
@@ -98,16 +144,22 @@
         <!-- Mostrar métricas de rendimiento -->
         <h2>Métricas de Rendimiento</h2>
         <div class="metrics">
-            <span><strong>RMSE:</strong> {{ RMSE }}</span>
+            <span><strong>Accuracy (Exactitud):</strong> {{ porcentajes[0]}}</span>
+        </div>
+        <div class="metrics">
+            <span><strong>(Root Mean Square Error) RMSE:</strong> {{ RMSE }}</span>
+        </div>
+        <div class="note">
+            <span>Una clasificación perfecta significa un RMSE = 0</span>
         </div>
         <table>
             <tr>
                 <th>Métrica</th>
-                <th>Etiqueta: 0</th>
-                <th>Etiqueta: 1</th>
+                <th>Clase: 0 (Mujeres)</th>
+                <th>Clase: 1 (Hombres)</th>
             </tr>
             <tr>
-                <td>Precisión</td>
+                <td>Precision</td>
                 <td>{{ precision_0 }}</td>
                 <td>{{ precision_1 }}</td>
             </tr>
@@ -117,20 +169,20 @@
                 <td>{{ recall_1 }}</td>
             </tr>
             <tr>
-                <td>F-measure</td>
+                <td>F-measure (β = 1)</td>
                 <td>{{ f_measure_0 }}</td>
                 <td>{{ f_measure_1 }}</td>
             </tr>
         </table>
 
         <!-- Botón para regresar al menú principal -->
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="/" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Menú</a>
+        <div class="menu-button" style="text-align: center;">
+            <a href="/">Regresar al Menú</a>
         </div>
-        
+
         <!-- Botón para regresar a la selección de características -->
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="/agrupamiento_espectral" style="background-color: #5d49aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Seleccionar caracteristicas</a>
+        <div style="text-align: center;">
+            <a href="/agrupamiento_espectral" class="features-button">Seleccionar características</a>
         </div>
     </div>
 </body>

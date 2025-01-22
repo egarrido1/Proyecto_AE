@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recuperar Contraseña</title>
-    <!-- Este formulario utiliza JavaScript para validar que las contraseñas coincidan antes de enviarlo -->
+    <title>Registro de Usuario</title>
     <style>
-        /* código CSS */
-        body {
+       body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to bottom, #4CAF50, #f4f4f9);
             display: flex;
@@ -20,10 +18,11 @@
 
         .container {
             background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 300px;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            width: 300px; /* Tamaño ajustado igual a las otras páginas */
+            text-align: center;
         }
 
         h1 {
@@ -33,37 +32,55 @@
         }
 
         h2 {
-            text-align: center;
             color: #333;
+            margin-bottom: 20px;
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             font-weight: bold;
+            color: #555;
         }
 
         input {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
+            padding: 12px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
+            font-size: 14px;
+            color: #333;
+            background-color: #e6f7ff; /* Fondo azul claro */
+        }
+
+        input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            background-color: #cceeff; /* Fondo azul claro cuando se enfoca */
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            /*font-size: 16px;*/
+            font-weight: bold;
         }
 
         button:hover {
             background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+            display: none;
         }
 
         a {
@@ -82,72 +99,83 @@
             text-decoration: underline; /* Subrayado al pasar el mouse */
         }
 
-
         .error-message {
             color: red;
-            font-size: 12px;
-            display: block;
+             display: none; /* Oculto por defecto */
         }
 
-        .success {
-            color: green;
-            font-size: 14px;
-            display: block;
-        }
     </style>
 </head>
 <body>
     <h1>Clasificación Binaria de Voces Humanas</h1>
     <div class="container">
-        <h2>Recuperar Contraseña</h2>
-        <form method="POST" action="{{ url_for('recuperar_contraseña') }}" onsubmit="return validateForm()">
-            <!-- Identificación del usuario -->
+        <h2>Registro de Usuario</h2>
+        <form method="POST" action="{{ url_for('registrar_usuario') }}" onsubmit="return validateForm()">
+            <!-- Nombre de usuario -->
             <div>
                 <label for="username">Nombre de usuario:</label>
                 <input type="text" id="username" name="username" required>
             </div>
-            <!-- Nueva contraseña -->
+            
+            <!-- Contraseña -->
             <div>
-                <label for="new_password">Nueva Contraseña:</label>
-                <input type="password" id="new_password" name="new_password" required>
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required>
             </div>
-            <!-- Confirmación de contraseña -->
+
+            <!-- Confirmar contraseña -->
             <div>
                 <label for="confirm_password">Confirmar Contraseña:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
-
             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <ul class="messages">
-                        {% for category, message in messages %}
-                            <li class="error-message">{{ message }}</li>
-                        {% endfor %}
+                 {% if messages %}
+                     <ul> {% for category, message in messages %}
+                             <li class="{{ category }}">{{ message }}</li>
+                            {% endfor %}
                     </ul>
                 {% endif %}
             {% endwith %}
 
+            <!-- Error de contraseñas no coinciden -->
+            <div id="error-message" class="error-message">
+                Las contraseñas no coinciden.
+            </div>
 
-            
-            <!-- Botón de envío -->
-            <button type="submit">Cambiar Contraseña</button>
+            <!-- Botón de registro -->
+            <button type="submit">Registrarse</button>
         </form>
         <a href="{{ url_for('home') }}">Regresar</a>
+    </div>
 
-    
     <script>
         function validateForm() {
-            const newPassword = document.getElementById("new_password").value;
+            const password = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirm_password").value;
             const errorMessage = document.getElementById("error-message");
+            
+            // Limpia el mensaje previo
+            errorMessage.innerText = "";
 
-            if (newPassword !== confirmPassword) {
+    
+            // Si las contraseñas no  coinciden manda mensaje de error
+            if (password !== confirmPassword) {
+                errorMessage.innerText = "Las contraseñas no coinciden.";
                 errorMessage.style.display = "block";
                 return false; // No enviar el formulario
-            } else {
-                errorMessage.style.display = "none";
-                return true; // Enviar el formulario
             }
+            // Validar requisitos de la contraseña
+            // Expresión regular para verificar la contraseña
+             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+~\-=\[\]{}|;:'",.<>?/]).{8,}$/;
+
+            if (!passwordRegex.test(password)) {
+                errorMessage.innerText = "La contraseña debe tener al menos 8 caracteres,1 letra mayuscula, incluir un número y un carácter especial.";
+                errorMessage.style.display = "block";
+                return false; // No enviar el formulario
+            }
+            // Si todo está bien
+            errorMessage.style.display = "none";
+            return true;
         }
     </script>
 </body>

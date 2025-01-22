@@ -13,6 +13,10 @@
             align-items: center;
             height: 100vh;
             margin: 0;
+
+            /*******/
+            flex-direction: column; /* Permite apilar elementos */
+            /******/
         }
 
         .container {
@@ -24,6 +28,13 @@
             width: 100%;
             text-align: center;
         }
+
+        h1 {
+            text-align: center;
+            color: #3E8E41;
+            margin-bottom: 20px;
+        }
+
 
         h2 {
             text-align: center;
@@ -80,7 +91,9 @@
             margin-top: 10px;
             font-size: 14px;
             transition: color 0.3s ease;
-            text-align: center; /* Para centrar los enlaces */
+
+            /*********
+            text-align: center; *******//* Para centrar los enlaces */
         }
 
         /* Efecto hover para los enlaces */
@@ -105,6 +118,7 @@
     </style>
 </head>
 <body>
+    <h1>Clasificación Binaria de Voces Humanas</h1>
     <div class="container">
         <h2>Iniciar sesión</h2>
         <form method="POST" autocomplete="off">
@@ -127,7 +141,7 @@
             <button type="submit">Iniciar sesión</button>
         </form>
         <a href="{{ url_for('recuperar_contraseña') }}">¿Olvidaste tu contraseña?</a>
-        <a href="{{ url_for('register') }}">Registrarse</a>
+        <a href="{{ url_for('registrar_usuario') }}">Registrarse</a>
     </div>
 </body>
 </html>

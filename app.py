@@ -1,7 +1,14 @@
+# Archivo app.py
+# Archivo principal en codigo python que contiene la logica de la aplicación Flask "Implementación del método -
+#       de agrupamiento espectral para la segmentación binaria de voces humanas"
+# Autor: Teresa Edith Garrido Rodríguez
+
 from flask import Flask, render_template, request, redirect, url_for, session
 import numpy as np
 import pandas as pd
+import matplotlib
 import matplotlib.pyplot as plt
+matplotlib.use('Agg')
 import secrets
 import sqlite3 
 from flask_sqlalchemy import SQLAlchemy
@@ -121,8 +128,8 @@ def load_user(user_id):
 # db.create_all()  # Crea la base de datos y las tablas
 
 # Ruta para registrar un usuario
-@app.route('/register', methods=['GET', 'POST'])
-def register():
+@app.route('/registrar_usuario', methods=['GET', 'POST'])
+def registrar_usuario():
     if request.method == 'POST':
         # Obtener los datos del formulario
         nombre_usuario = request.form['username']
@@ -131,12 +138,12 @@ def register():
         # Verificar si el nombre de usuario ya está registrado
         if Usuario.query.filter_by(nombre_usuario=nombre_usuario).first():
             flash('El nombre de usuario ya está registrado. Por favor, elige otro.', 'error')
-            return redirect(url_for('register'))
+            return redirect(url_for('registrar_usuario'))
         
         # Validar la contraseña
         if not validar_contraseña(password):
             flash('La contraseña debe tener al menos 8 caracteres, 1 mayuscula, 1 dígito y 1 carácter especial.', 'error')
-            return render_template('register.html')
+            return render_template('registrar_usuario')
         
         # Crear un nuevo usuario
         nuevo_usuario = Usuario(nombre_usuario=nombre_usuario)
@@ -149,7 +156,7 @@ def register():
         flash('Registro exitoso. Por favor, inicia sesión.')
         return redirect(url_for('home'))
 
-    return render_template('register.html')
+    return render_template('registrar_usuario.html')
 
 
 # Ruta para el menú principal despues de iniciar sesion
@@ -210,7 +217,7 @@ def recuperar_contraseña():
         db.session.commit()
         
 
-        flash('Contraseña cambiada con éxito. Por favor, inicia sesión', 'success')
+        flash('Contraseña cambiada con éxito. Por favor, cierra sesión y posteriormente inicia sesión', 'success')
         return redirect(url_for('home'))  # Redirigir al login después de cambiar la contraseña
 
     return render_template('recuperar_contraseña.html')
@@ -352,7 +359,7 @@ def agrupamiento_espectral():
 
         # Ejecutar el algoritmo con las características seleccionadas
         etiquetas, X_filtrado = ejecutar_agrupamiento_espectral(X, caracteristicas)
-
+        
         # Antes de almacenar en la sesión
         
         X_filtrado = np.array(X_filtrado).reshape(-1, len(caracteristicas))
@@ -365,21 +372,16 @@ def agrupamiento_espectral():
         # Calcula métricas
         confusionM,RMSE,precision_0,recall_0,f_measure_0,precision_1,recall_1,f_measure_1,porcentajes=calcula_metricas(X,etiquetas)
         
-        print("confusionM dentro de agrupamiento_espectral", confusionM)
-        
         # Comparar diagonales
         diagonal_principal = np.sum(np.diag(confusionM))
         diagonal_secundaria = np.sum(np.diag(np.fliplr(confusionM)))  # np.fliplr invierte las columnas para acceder a la diagonal secundaria
 
         if diagonal_principal < diagonal_secundaria:
             # Invertir etiquetas
-            etiquetas = [1 - x for x in etiquetas]
-
-            print("etiquetas despues de cambiar", etiquetas)
+            etiquetas = [int(1 - x) for x in etiquetas]
 
             # Recalcular métricas con las nuevas etiquetas
             confusionM, RMSE, precision_0, recall_0, f_measure_0, precision_1, recall_1, f_measure_1, porcentajes = calcula_metricas(X, etiquetas)
-            print("confusionM despues de cambiar valores", confusionM)
 
         # Colores personalizados para cada etiqueta
         colores = []    # Inicializa la lista de colores
@@ -400,22 +402,22 @@ def agrupamiento_espectral():
 
             # Subgráfica 1: Resultados del agrupamiento (con colores personalizados)
             sc1 = ax1.scatter(X_filtrado[:, 0], X_filtrado[:, 1], c=colores, s=90)  # Usar colores personalizados
-            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=16)
-            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=16)
-            ax1.set_title("Agrupamiento Espectral 2D", fontsize=18)
+            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=19)
+            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=19)
+            ax1.set_title("Agrupamiento Espectral 2D", fontsize=23)
             
             # Añadir la leyenda en la subgráfica 1 (Agrupamiento Espectral)
             ax1.scatter([], [], c='blue', label='Mujeres')  # Invisible para leyenda
             ax1.scatter([], [], c='green', label='Hombres')  # Invisible para leyenda
-            ax1.legend(fontsize=14)
+            ax1.legend(fontsize=16)
 
             # Subgráfica 2: Verdad fundamental
             sc2 = ax2.scatter(X_filtrado[:74, 0], X_filtrado[:74, 1], c='blue', label='Mujeres', s=90)
             sc3 = ax2.scatter(X_filtrado[74:, 0], X_filtrado[74:, 1], c='green', label='Hombres', s=90)
-            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=16)
-            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=16)
-            ax2.set_title("Verdad Fundamental 2D", fontsize=18)
-            ax2.legend(fontsize=14)
+            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=19)
+            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=19)
+            ax2.set_title("Verdad Fundamental 2D", fontsize=23)
+            ax2.legend(fontsize=16)
 
             # Guardar la imagen y cerrar
             imagen = 'static/agrupamiento_vs_verdad_2d.png'
@@ -430,26 +432,26 @@ def agrupamiento_espectral():
 
             # Graficar los puntos del agrupamiento espectral en el primer subgráfico
             sc1 = ax1.scatter(X_filtrado[:, 0], X_filtrado[:, 1], X_filtrado[:, 2], c=colores, s=90, alpha=0.8)
-            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=16)
-            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=16)
-            ax1.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=16)
-            ax1.set_title("Agrupamiento espectral 3D", fontsize=18)
+            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=18)
+            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=18)
+            ax1.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=18)
+            ax1.set_title("Agrupamiento espectral 3D", fontsize=22)
             
             # Añadir la leyenda en la subgráfica 1 (Agrupamiento Espectral)
             ax1.scatter([], [], c='blue', label='Mujeres', s=65, alpha=1)  # Alpha < 1 puntos con transparencia
-            ax1.scatter([], [], c='green', label='Hombres', s=65, alpha=1)  # alpha =,0.6 puntos con transparencia, alpha=1 puntos sin transparencia
+            ax1.scatter([], [], c='green', label='Hombres', s=65, alpha=1)  # alpha = 0.6 puntos con transparencia, alpha=1 puntos sin transparencia
             ax1.legend(fontsize=16)
             
             # Graficar la verdad fundamental en el segundo subgráfico con colores específicos
             ax2.scatter(X_filtrado[:74, 0], X_filtrado[:74, 1], X_filtrado[:74, 2], c='blue', label='Mujeres', s=90, alpha=0.8)
             ax2.scatter(X_filtrado[74:, 0], X_filtrado[74:, 1], X_filtrado[74:, 2], c='green', label='Hombres', s=90, alpha=0.8)
-            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=16)
-            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=16)
-            ax2.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=16)
-            ax2.set_title("Verdad Fundamental 3D", fontsize=18)
+            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=18)
+            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=18)
+            ax2.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=18)
+            ax2.set_title("Verdad Fundamental 3D", fontsize=22)
 
             # Añadir leyenda a la verdad fundamental
-            ax2.legend(fontsize=14)
+            ax2.legend(fontsize=16)
 
             # Ajustar la disposición para evitar solapamiento entre subgráficas
             #plt.tight_layout()
@@ -463,7 +465,7 @@ def agrupamiento_espectral():
         # Renderizar el template y pasarle la ruta de la imagen
         return render_template('resultadosAE.html', imagen=imagen, etiquetas=etiquetas, confusionM=confusionM, RMSE=RMSE, 
                             precision_0=precision_0, recall_0=recall_0, f_measure_0=f_measure_0, precision_1=precision_1,
-                                recall_1=recall_1, f_measure_1=f_measure_1)
+                                recall_1=recall_1, f_measure_1=f_measure_1, porcentajes=porcentajes)
         
 
     # Si es una solicitud GET, muestra la página inicial
@@ -508,7 +510,7 @@ def k_means():
 
         if diagonal_principal < diagonal_secundaria:
             # Invertir etiquetas
-            etiquetas = [1 - x for x in etiquetas]
+            etiquetas = [int(1 - x) for x in etiquetas]
 
             # Recalcular métricas con las nuevas etiquetas
             confusionM, RMSE, precision_0, recall_0, f_measure_0, precision_1, recall_1, f_measure_1, porcentajes = calcula_metricas(X, etiquetas)
@@ -535,18 +537,18 @@ def k_means():
             ax1 = fig.add_subplot(121)
             sc1 = ax1.scatter(X_filtrado[:, 0], X_filtrado[:, 1], c=colores, alpha=0.8)
             ax1.scatter(centros[:, 0], centros[:, 1], c='red', marker='X', s=160, label="Centroides", alpha=1)
-            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=14)
-            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=14)
-            ax1.set_title("K-means 2D", fontsize=18)
+            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=19)
+            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=19)
+            ax1.set_title("K-means 2D", fontsize=23)
 
             # Despliega etiquetas para grafica k-means (parte superior derecha)
             ax1.legend(
                 handles=[
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres'),
                     plt.Line2D([0], [0], marker='X', color='red', markersize=12, label='Centroides')
                 ],
-                fontsize=12, loc='upper right', ncol=1  # Leyenda en la parte superior derecha
+                fontsize=16, loc='upper right', ncol=1  # Leyenda en la parte superior derecha
             )
 
             # Subgráfica 2: Verdad Fundamental
@@ -560,18 +562,18 @@ def k_means():
             # Despliega etiquetas para la verdad fundamental (parte superior derecha)
             ax2.legend(
                 handles=[
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1')
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres')
                 ],
-                fontsize=12, loc='upper right', ncol=1  # Leyenda sin los centroides
+                fontsize=16, loc='upper right', ncol=1  # Leyenda sin los centroides
             )
 
-            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=14)
-            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=14)
-            ax2.set_title("Verdad Fundamental 2D", fontsize=18)
+            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=19)
+            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=19)
+            ax2.set_title("Verdad Fundamental 2D", fontsize=23)
 
             # Guardar la imagen
-            imagen = 'static/kmeans_vs_truth_2d.png'
+            imagen = 'static/kmeans_vs_verdad_2d.png'
             plt.savefig(imagen)
             plt.close()
 
@@ -584,17 +586,17 @@ def k_means():
             sc1 = ax1.scatter(X_filtrado[:, 0], X_filtrado[:, 1], X_filtrado[:, 2], c=colores, alpha=0.8)
             ax1.scatter(centros[:, 0], centros[:, 1], centros[:, 2], c='red', marker='X', s=160, label="Centroides", alpha=1)
 
-            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=14)
-            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=14)
-            ax1.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=14)
-            ax1.set_title("K-means 3D", fontsize=18)
+            ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=18)
+            ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=18)
+            ax1.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=18)
+            ax1.set_title("K-means 3D", fontsize=22)
 
             # Despliega etiquetas para grafica K-means (parte superior derecha)
             ax1.legend(handles=[
-                plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1'),
+                plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='hombres'),
                 plt.Line2D([0], [0], marker='X', color='red', markersize=12, label='Centroides')], 
-                fontsize=12, loc='upper right')  # Leyenda de K-means
+                fontsize=16, loc='upper right')  # Leyenda de K-means
 
             # Subgráfica 2: Verdad Fundamental
             ax2 = fig.add_subplot(122, projection='3d')
@@ -606,19 +608,19 @@ def k_means():
            # Despliega etiquetas para grafica verdad fundamental (parte superior derecha)
             ax2.legend(
                  handles=[
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1')
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=16, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=16, label='Hombres')
                 ],
-                fontsize=12, loc='upper right', ncol=1  # Leyenda sin los centroides
+                fontsize=16, loc='upper right', ncol=1  # Leyenda sin los centroides
             )
 
-            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=14)
-            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=14)
-            ax2.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=14)
-            ax2.set_title("Verdad Fundamental 3D", fontsize=18)
+            ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=18)
+            ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=18)
+            ax2.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=18)
+            ax2.set_title("Verdad Fundamental 3D", fontsize=22)
             
             # Guardar la imagen
-            imagen = 'static/kmeans_vs_truth_3d.png'
+            imagen = 'static/kmeans_vs_verdad_3d.png'
             plt.savefig(imagen)
             plt.close()
 
@@ -627,7 +629,7 @@ def k_means():
         # Renderizar el template y pasarle la ruta de la imagen
         return render_template('resultadosKM.html', imagen=imagen, etiquetas=etiquetas, confusionM=confusionM, RMSE=RMSE, 
                             precision_0=precision_0, recall_0=recall_0, f_measure_0=f_measure_0, precision_1=precision_1,
-                                recall_1=recall_1, f_measure_1=f_measure_1)
+                                recall_1=recall_1, f_measure_1=f_measure_1, porcentajes = porcentajes)
 
         
     # Si es una solicitud GET, muestra el formulario
@@ -662,7 +664,7 @@ def compara_algoritmos():
 
         if diagonal_principal_ae < diagonal_secundaria_ae:
             # Invertir etiquetas
-            etiquetas_ae = [1 - x for x in etiquetas_ae]
+            etiquetas_ae = [int(1 - x) for x in etiquetas_ae]
 
             # Recalcular métricas con las nuevas etiquetas
             confusionM_ae,RMSE_ae,precision_ae_0,recall_ae_0,f_measure_ae_0,precision_ae_1,recall_ae_1,f_measure_ae_1,porcentajes_ae=calcula_metricas(X,etiquetas_ae)
@@ -675,7 +677,7 @@ def compara_algoritmos():
 
         if diagonal_principal_km < diagonal_secundaria_km:
             # Invertir etiquetas
-            etiquetas_km = [1 - x for x in etiquetas_km]
+            etiquetas_km = [int(1 - x) for x in etiquetas_km]
 
             # Recalcular métricas con las nuevas etiquetas
             confusionM_km,RMSE_km,precision_km_0,recall_km_0,f_measure_km_0,precision_km_1,recall_km_1,f_measure_km_1,porcentajes_km=calcula_metricas(X,etiquetas_km)
@@ -708,32 +710,59 @@ def compara_algoritmos():
             
             # Agrupamiento Espectral
             axes[0].scatter(X_filtrado_ae[:, 0], X_filtrado_ae[:, 1], c=colores_ae, s=65)
-            axes[0].set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]])  # Usar el diccionario para los nombres
-            axes[0].set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]])  # Usar el diccionario para los nombres
-            axes[0].set_title('Agrupamiento Espectral')
+            axes[0].set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=19)  # Usar el diccionario para los nombres
+            axes[0].set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=19)  # Usar el diccionario para los nombres
+            axes[0].set_title('Agrupamiento Espectral 2D', fontsize=22)
             
             # Despliega leyenda en la parte superior derecha
-            axes[0].legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1')],
-               loc='upper right', title='Leyenda')
+            axes[0].legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres')],
+               fontsize=14, loc='upper right')
             
             # K-Means
             axes[1].scatter(X_filtrado_km[:, 0], X_filtrado_km[:, 1], c=colores_km, s=65)
             plt.scatter(centros[:, 0], centros[:, 1], c='red', marker='X', s=150, label="Centroides", alpha=1)  # Centroides
-            axes[1].set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]])  # Usar el diccionario para los nombres
-            axes[1].set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]])  # Usar el diccionario para los nombres
-            axes[1].set_title('K-Means')
+            axes[1].set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=19)  # Usar el diccionario para los nombres
+            axes[1].set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=19)  # Usar el diccionario para los nombres
+            axes[1].set_title('K-Means 2D', fontsize=22)
             
             # Despliega leyenda en la parte superior derecha
-            axes[1].legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1'),
+            axes[1].legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres'),
                         plt.Line2D([0], [0], marker='X', color='red', markersize=10, label='Centroides')],
-               loc='upper right', title='Leyenda')
-            
+               fontsize=14, loc='upper right')
             
             # Guardar imagen combinada
             imagen_combinada = 'static/comparaAlgoritmos_2d.png'
             plt.savefig(imagen_combinada)
+            
+            # Crear la fugura para  la grafica de la verdad fundamental
+            plt.figure(figsize=(10, 6))
+
+             # Filtrar la matriz X según las columnas seleccionadas
+            X_filtrado = X[:, caracteristicas]
+            
+            # Graficar la verdad fundamental
+            plt.scatter(X_filtrado[:74, 0], X_filtrado[:74, 1], c='blue', label='Mujeres', alpha=0.8)
+            plt.scatter(X_filtrado[74:, 0], X_filtrado[74:, 1], c='green', label='Hombres', alpha=0.8)
+
+            # Configuración de etiquetas y título
+            plt.xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=11)
+            plt.ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=11)
+            plt.title("Verdad Fundamental 2D", fontsize=14)
+
+            # Configuración de la leyenda
+            plt.legend(
+                handles=[
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres')
+                ],
+                fontsize=13, loc='upper right', ncol=1
+            )
+
+            # Guardar la gráfica de la verdad fundamental.
+            imagen_verdad = 'static/verdadFundamental_2d.png'
+            plt.savefig(imagen_verdad)
             plt.close()
 
         elif len(caracteristicas) == 3:
@@ -746,12 +775,12 @@ def compara_algoritmos():
             ax1.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]])  # Usar el diccionario para los nombres
             ax1.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]])  # Usar el diccionario para los nombres
             ax1.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]])  # Usar el diccionario para los nombres
-            ax1.set_title('Agrupamiento Espectral')
+            ax1.set_title('Agrupamiento Espectral 3D')
             
             # Despliega leyenda en la parte superior derecha.
-            ax1.legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1')],
-                loc='upper right', title='Leyenda')
+            ax1.legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres')],
+                loc='upper right')
             
             # K-Means
             ax2 = fig.add_subplot(122, projection='3d')
@@ -760,27 +789,57 @@ def compara_algoritmos():
             ax2.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]])  # Usar el diccionario para los nombres
             ax2.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]])  # Usar el diccionario para los nombres
             ax2.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]])  # Usar el diccionario para los nombres
-            ax2.set_title('K-Means')
+            ax2.set_title('K-Means 3D')
             
             # Despliega leyenda en la parte superior derecha.
-            ax2.legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Etiqueta 0'),
-                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Etiqueta 1'),
+            ax2.legend(handles=[plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Hombres'),
                     plt.Line2D([0], [0], marker='X', color='red', markersize=10, label='Centroides')],
-                loc='upper right', title='Leyenda')
+                loc='upper right')
             
             # Guardar imagen combinada
             imagen_combinada = 'static/comparaAlgoritmos_3d.png'
             plt.savefig(imagen_combinada)
+
+            # Crear la figura 3D para la grafica de la verdad fundamental.
+            fig = plt.figure(figsize=(12, 8))
+            ax = fig.add_subplot(111, projection='3d')
+
+            # Filtrar la matriz X según las columnas seleccionadas
+            X_filtrado = X[:, caracteristicas]
+             
+            # Graficar la verdad fundamental
+            ax.scatter(X_filtrado[:74, 0], X_filtrado[:74, 1], X_filtrado[:74, 2], c='blue', label='Mujeres', alpha=0.8)
+            ax.scatter(X_filtrado[74:, 0], X_filtrado[74:, 1], X_filtrado[74:, 2], c='green', label='Hombres', alpha=0.8)
+
+            # Configuración de etiquetas y título
+            ax.set_xlabel(CARACTERISTICAS_IDX[caracteristicas[0]], fontsize=14)
+            ax.set_ylabel(CARACTERISTICAS_IDX[caracteristicas[1]], fontsize=14)
+            ax.set_zlabel(CARACTERISTICAS_IDX[caracteristicas[2]], fontsize=14)
+            ax.set_title("Verdad Fundamental 3D", fontsize=18)
+
+            # Configuración de la leyenda
+            ax.legend(
+                handles=[
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=16, label='Mujeres'),
+                    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=16, label='Hombres')
+                ],
+                fontsize=13, loc='upper right', ncol=1
+            )
+
+            # Guardar la imagen de la verdad fundamental.
+            imagen_verdad = 'static/verdadFundamental_3d.png'
+            plt.savefig(imagen_verdad)
             plt.close()
 
         # Renderizar la página de comparación
         return render_template('resultados_comparacion.html', 
-                               imagen_combinada=imagen_combinada, 
+                               imagen_combinada=imagen_combinada,imagen_verdad=imagen_verdad,
                                caracteristicas=caracteristicas,confusionM_ae=confusionM_ae,RMSE_ae=RMSE_ae,precision_ae_0=precision_ae_0,
                                recall_ae_0=recall_ae_0,f_measure_ae_0=f_measure_ae_0,precision_ae_1=precision_ae_1,recall_ae_1=recall_ae_1,
-                               f_measure_ae_1=f_measure_ae_1,confusionM_km=confusionM_km,RMSE_km=RMSE_km,precision_km_0=precision_km_0,
+                               f_measure_ae_1=f_measure_ae_1,porcentajes_ae=porcentajes_ae,confusionM_km=confusionM_km,RMSE_km=RMSE_km,precision_km_0=precision_km_0,
                                recall_km_0=recall_km_0,f_measure_km_0=f_measure_km_0,precision_km_1=precision_km_1,recall_km_1=recall_km_1,
-                               f_measure_km_1=f_measure_km_1)
+                               f_measure_km_1=f_measure_km_1, porcentajes_km=porcentajes_km)
         
     return render_template('selecciona_caracteristicas.html', titulo="Compara algoritmos")
 

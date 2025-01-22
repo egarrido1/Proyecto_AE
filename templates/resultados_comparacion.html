@@ -11,61 +11,137 @@
             color: #333;
             padding: 20px;
         }
+
         h1, h2 {
             text-align: center;
             color: #4CAF50;
         }
+
         .image-container {
             display: flex;
             justify-content: center;
             margin: 20px 0;
         }
+
+        /*
         img {
-            max-width: 100%;
+            max-width: 90%;
             height: auto;
             border: 2px solid #4CAF50;
             border-radius: 10px;
         }
+
+        .verdad-fundamental img {
+            max-width: 60%;
+            height: auto;
+        }*/
+
+        /* Regla general para todas las imágenes */
+        img {
+            max-width: 90%; 
+            height: auto;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+        }
+
+        /* Regla específica para la imagen de "Verdad Fundamental" */
+        .verdad-fundamental img {
+            max-width: 60%;  
+            height: auto;
+            display: block;
+            margin: 0 auto;  /* Centra la imagen */
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 10px;
             text-align: center;
         }
+
         th {
             background-color: #4CAF50;
             color: white;
         }
+
         .metrics {
-            margin: 20px 0;
+            margin: 10px 0;
             text-align: center;
         }
-        .back-button {
-            display: block;
-            width: fit-content;
-            margin: 20px auto;
-            padding: 10px 20px;
-            text-decoration: none;
+
+        .metrics span {
+            display: inline-block;
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .note {
+            font-style: italic;
+            color: gray;
+            margin-top: 5px;
+            text-align: center;
+        }
+       
+        /* Estilo para el botón del menú principal */
+        .menu-button a {
+            display: inline-block;
             background-color: #4CAF50;
             color: white;
+            padding: 10px 20px;
+            text-decoration: none;
             border-radius: 5px;
+            margin-top: 20px;
             text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            font-weight: normal; /* Esto asegura que la letra no esté en negrita */
+        }
+
+        .menu-button a:hover {
+            background-color: #45a049;
+            transform: scale(1.05); 
+        }
+
+        /* Estilo para el botón "Seleccionar características" */
+        .features-button {
+            display: inline-block;
+            background-color: #5d49aa;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .features-button:hover {
+            background-color: #4e3b8e;
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
     <h1>Resultados de la Comparación</h1>
 
-    <!-- Gráfica -->
+    <!-- Gráfica imagen combinada-->
     <div class="image-container">
         <img src="{{ imagen_combinada }}" alt="Comparación de Algoritmos">
     </div>
+
+    <!-- Gráfica verdad fundamental-->
+    <div class="image-container verdad-fundamental">
+        <img src="{{ imagen_verdad }}" alt="Verdad fundamental">
+    </div>    
 
     <!-- Métricas de Agrupamiento Espectral -->
     <h2>Agrupamiento Espectral</h2>
@@ -73,16 +149,16 @@
     <table>
         <tr>
             <th></th>
-            <th>Predicción: 0</th>
-            <th>Predicción: 1</th>
+            <th>Estimación: 0 (Mujeres)</th>
+            <th>Estimación: 1 (Hombres)</th>
         </tr>
         <tr>
-            <th>Etiqueta: 0</th>
+            <th>Clase: 0 (Mujeres)</th>
             <td>{{ confusionM_ae[0][0] }}</td>
             <td>{{ confusionM_ae[0][1] }}</td>
         </tr>
         <tr>
-            <th>Etiqueta: 1</th>
+            <th>Clase: 1 (Hombres)</th>
             <td>{{ confusionM_ae[1][0] }}</td>
             <td>{{ confusionM_ae[1][1] }}</td>
         </tr>
@@ -90,16 +166,22 @@
 
     <h3>Métricas de Rendimiento</h3>
     <div class="metrics">
-        <span><strong>RMSE:</strong> {{ RMSE_ae }}</span>
+        <span><strong>Accuracy (Exactitud):</strong> {{ porcentajes_ae[0]}}</span>
+    </div>
+    <div class="metrics">
+        <span><strong>(Root Mean Square Error) RMSE:</strong> {{ RMSE_ae }}</span>
+    </div>
+    <div class="note">
+        <span>Una clasificación perfecta significa un RMSE = 0</span>
     </div>
     <table>
         <tr>
             <th>Métrica</th>
-            <th>Etiqueta: 0</th>
-            <th>Etiqueta: 1</th>
+            <th>Clase: 0 (Mujeres)</th>
+            <th>Clase: 1 (Hombres)</th>
         </tr>
         <tr>
-            <td>Precisión</td>
+            <td>Precision</td>
             <td>{{ precision_ae_0 }}</td>
             <td>{{ precision_ae_1 }}</td>
         </tr>
@@ -109,7 +191,7 @@
             <td>{{ recall_ae_1 }}</td>
         </tr>
         <tr>
-            <td>F-measure</td>
+            <td>F-measure (β = 1)</td>
             <td>{{ f_measure_ae_0 }}</td>
             <td>{{ f_measure_ae_1 }}</td>
         </tr>
@@ -121,16 +203,16 @@
     <table>
         <tr>
             <th></th>
-            <th>Predicción: 0</th>
-            <th>Predicción: 1</th>
+            <th>Estimación: 0 (Mujeres)</th>
+            <th>Estimación: 1 (Hombres)</th>
         </tr>
         <tr>
-            <th>Etiqueta: 0</th>
+            <th>Clase: 0 (Mujeres)</th>
             <td>{{ confusionM_km[0][0] }}</td>
             <td>{{ confusionM_km[0][1] }}</td>
         </tr>
         <tr>
-            <th>Etiqueta: 1</th>
+            <th>clase: 1 (Hombres)</th>
             <td>{{ confusionM_km[1][0] }}</td>
             <td>{{ confusionM_km[1][1] }}</td>
         </tr>
@@ -138,16 +220,22 @@
 
     <h3>Métricas de Rendimiento</h3>
     <div class="metrics">
-        <span><strong>RMSE:</strong> {{ RMSE_km }}</span>
+        <span><strong>Accuracy (Exactitud):</strong> {{ porcentajes_km[0]}}</span>
+    </div>
+    <div class="metrics">
+        <span><strong>( Root Mean Square Error) RMSE:</strong> {{ RMSE_km }}</span>
+    </div>
+    <div class="note">
+        <span>Una clasificación perfecta significa un RMSE = 0</span>
     </div>
     <table>
         <tr>
             <th>Métrica</th>
-            <th>Etiqueta: 0</th>
-            <th>Etiqueta: 1</th>
+            <th>Clase: 0 (Mujeres)</th>
+            <th>Clase: 1 (Hombres)</th>
         </tr>
         <tr>
-            <td>Precisión</td>
+            <td>Precision</td>
             <td>{{ precision_km_0 }}</td>
             <td>{{ precision_km_1 }}</td>
         </tr>
@@ -157,16 +245,20 @@
             <td>{{ recall_km_1 }}</td>
         </tr>
         <tr>
-            <td>F-measure</td>
+            <td>F-measure (β = 1)</td>
             <td>{{ f_measure_km_0 }}</td>
             <td>{{ f_measure_km_1 }}</td>
         </tr>
     </table>
 
-    <a href="/" class="back-button">Menu</a>
-     <!-- Botón para regresar a la selección de características -->
-     <div style="text-align: center; margin-top: 20px;">
-        <a href="/compara_algoritmos" style="background-color: #5d49aa; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Seleccionar caracteristicas</a>
+    <!-- Botón para regresar al menú principal -->
+    <div class="menu-button" style="text-align: center;">
+        <a href="/">Regresar al Menú</a>
+    </div>
+
+    <!-- Botón para regresar a la selección de características -->
+    <div style="text-align: center;">
+        <a href="/compara_algoritmos" class="features-button">Seleccionar características</a>
     </div>
 </body>
 </html>

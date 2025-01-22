@@ -7,12 +7,13 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
+            background: linear-gradient(to bottom, #4CAF50, #f4f4f9);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
+            flex-direction: column; /* Permite apilar elementos */
         }
 
         .container {
@@ -22,6 +23,12 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
             width: 300px; /* Tamaño ajustado igual que las otras páginas */
             text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #3E8E41;
+            margin-bottom: 20px;
         }
 
         h2 {
@@ -82,11 +89,14 @@
             margin-top: 20px;
             text-decoration: none;
             color: #4CAF50;
-            font-weight: bold;
+            font-size: 14px;
+            /*font-weight: bold;*/
         }
 
-        a:hover {
-            color: #66bb6a;
+         /* Efecto hover para los enlaces */
+         a:hover {
+            color: #3e8e41; /* Color más oscuro al pasar el mouse */
+            text-decoration: underline; /* Subrayado al pasar el mouse */
         }
 
         .error-message {
@@ -103,6 +113,7 @@
     </style>
 </head>
 <body>
+    <h1>Clasificación Binaria de Voces Humanas</h1>
     <div class="container">
         <h2>Cambiar Contraseña</h2>
         <form method="POST" action="{{ url_for('cambiar_contraseña') }}" onsubmit="return validateForm()">
